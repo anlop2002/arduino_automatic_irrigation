@@ -26,7 +26,8 @@ void setup() {
   //relay setup
   pinMode(relayD2,OUTPUT);
 
-  //lcd setup
+  //lcd setup A4==SDA, A5==SCL
+  lcd.backlight(); 
   lcd.begin (16,2);
   lcd.home ();                   // go home
 
@@ -37,6 +38,38 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  int sensorValue = analogRead(soilHumiditySensorA0); //A0
+  Serial.println(sensorValue);
+  
+ if (sensorValue >= 615)
+ {
+  Serial.println("Dry");
+  digitalWrite(relayD2,HIGH);
+  lcd.home();
+  lcd.clear();
+  lcd.print("Watering Plants");
+  delay(10000);
+  digitalWrite(relayD2,LOW);
+  }
+  else if (sensorValue >= 410 && sensorValue < 615)
+ {
+  Serial.println("Perfect");
+  lcd.home();
+  lcd.clear();
+  lcd.print("Optimal");
+  lcd.setCursor ( 0, 1 );
+  lcd.print("Humd.:");
+  lcd.print(sensorValue);
+  }    
+else if (sensorValue >= 0 && sensorValue < 410)
+ {
+  Serial.println("Recently Irrigated");
+  lcd.clear();
+  lcd.home();
+  lcd.print("Watered");
+  lcd.setCursor ( 0, 1 );
+  lcd.print("Humd.:");
+  lcd.print(sensorValue);
+  }
+  delay(1000);
 }
